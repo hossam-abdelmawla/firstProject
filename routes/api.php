@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Models\Category;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,7 +19,10 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+Route::middleware('auth:api')->group(function () {
 
-Route::post('register', [RegisterController::class, 'register']);
+    Route::post('register', [RegisterController::class, 'register']);
+    Route::post('login', [RegisterController::class, 'login']);
+});
 
-Route::post('login', [RegisterController::class, 'login']);
+Category::factory(5)->create();
