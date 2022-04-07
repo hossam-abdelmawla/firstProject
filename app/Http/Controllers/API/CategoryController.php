@@ -18,28 +18,20 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $categories = CategoryResource::collection(Category::get());
-        // return (new CategoryResource($categories))->response()->json();
-        return response()->json($categories);
+        $categories = CategoryResource::collection(Category::get())->additional([
+            "message"=>'wqeqweqwe'
+                ]);
+        return $categories;
     }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
 
     public function store(CategoryRequest $request)
     {
 
-        $validated = $request->validated();
+
         $category = Category::create($request->all());
-        return response()->json(new CategoryResource($user), 201);
+
+        return new CategoryResource($category);
+        // return CategoryResource::make($category);
     }
 
 
@@ -50,21 +42,14 @@ class CategoryController extends Controller
 
         $category = Category::find($id);
         if ($category) {
-            return response(new CategoryResource($category));
+            return new CategoryResource($category);
         }
-        return response('Category Not Found');
+        return response()->json([
+            'message' => 'Category Not Found'
+        ]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
+
 
     /**
      * Update the specified resource in storage.
@@ -73,16 +58,9 @@ class CategoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(CategoryRequest $request, $id)
     {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required',
-            'logo' => 'required',
-        ]);
 
-        if ($validator->fails()) {
-            return response($validator->errors());
-        }
         $category = Category::find($id);
         if (!$category) {
             return response('Category Not Found');

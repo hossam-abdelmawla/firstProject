@@ -6,7 +6,10 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\User;
-use App\Http\Resources\CategoryResource;
+use App\Http\Requests\RegisterRequest;
+use Illuminate\Support\Facades\Hash;
+use App\Http\Resources\User as ResourcesUser;
+
 
 class AuthController extends Controller
 {
@@ -28,6 +31,26 @@ class AuthController extends Controller
         return $this->createNewToken($token);
     }
 
+    // public function login(RegisterRequest $request){
+
+    //     if (! $token = auth()->attempt($request->validated())) {
+    //         return response()->json(['error' => 'Unauthorized'], 401);
+    //     }
+    //     return $this->createNewToken($token);
+    // }
+
+    // public function register(RegisterRequest $request) {
+
+    //     $input = $request->all();
+    //     $input['password'] = Hash::make($input['password']);
+    //     $user = User::create($input);
+
+    //     return ResourcesUser::make($user)->additional([
+    //         'message' => 'User successfully registered',
+    //         'status'  => 201
+    //     ]);
+    // }
+
     public function register(Request $request) {
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|between:2,100',
@@ -46,7 +69,6 @@ class AuthController extends Controller
             'message' => 'User successfully registered',
             'user' => $user
         ]
-        //new CategoryResource($user)
         , 201);
     }
 

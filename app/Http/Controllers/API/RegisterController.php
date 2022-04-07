@@ -18,33 +18,44 @@ class RegisterController extends Controller
     public function register(RegisterRequest $request)
     {
 
-        $request->validated();
         $input = $request->all();
         $input['password'] = Hash::make($input['password']);
         $user = User::create($input);
-        // $success['token'] = $user->createToken('ABC')->accessToken;
-        // $success['name'] = $user->name;
 
-        // return $this->sendResponse($success, 'User Registered Successfully');
-        // return (new ResourcesUser($user))->response()->json();
         return ResourcesUser::make($user);
     }
 
-    public function login(LoginRequest $request)
-    {
-        // if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
-        //     $user = Auth::user();
-        //     $success['token'] = $user->createToken('ABC')->accessToken;
-        //     $success['name'] = $user->name;
+    public function login(Request $request){
+        if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
+            $user = Auth::user();
+            $success['token'] = $user->createToken('seven')->accessToken;
+            return $success['token'];
+        }
+        return response()->json(['error' => 'Unauthorized'], 401);
+    }
 
-        //     return $this->sendResponse($success, 'User Logined Successfully');
-        // }
-        // else {
+    // public function login(RegisterRequest $request){
 
-        //     return $this->sendError('Please Validate Error', ['error' => 'Unauthorised']);
-        // }
-        $request->validated();
-        $user = Auth::user();
-        return ResourcesUser::make($user);
+    // 	$validator = Validator::make($request->all(), [
+    //         'email' => 'required|email',
+    //         'password' => 'required|string|min:6',
+    //     ]);
+    //     if ($validator->fails()) {
+    //         return response()->json($validator->errors(), 422);
+    //     }
+
+    //     if (! $token = auth()->attempt($request->validated())) {
+    //         return response()->json(['error' => 'Unauthorized'], 401);
+    //     }
+    //     return $this->createNewToken($token);
+    // }
+
+    protected function createNewToken($token){
+        return response()->json([
+            'access_token' => $token,
+            'token_type' => 'bearer',
+            'expires_in' => auth()->factory()->getTTL() * 60,
+            'user' => auth()->user()
+        ]);
     }
 }
